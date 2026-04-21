@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Joke Generator</title>
+
+    <link rel="stylesheet" href="../styles/styles.css">
+    <link rel="stylesheet" href="../styles/layoutstyles.css">
+</head>
+<body>
+    <div class="common header"> 
+        <span class="subheader">
+            <a href="../Index.html">Home</a> |
+            <a href="Fortnite.html">Fortnite</a> |
+            <a href="joke_generator.html">Joke Generator</a>
+        </span>
+
+<body>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  
+
+
+<style>
+  #joke-app { padding: 2rem 1rem; max-width: 560px; margin: 0 auto; }
+  #category-bar { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 1.5rem; }
+  .cat-btn { padding: 6px 14px; border-radius: 999px; border: 0.5px solid var(--color-border-secondary); background: transparent; font-size: 13px; cursor: pointer; color: var(--color-text-secondary); transition: all 0.15s; }
+  .cat-btn:hover { background: var(--color-background-secondary); }
+  .cat-btn.active { background: #EEEDFE; border-color: #AFA9EC; color: #3C3489; }
+  #joke-card { background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); padding: 2rem 1.5rem; min-height: 140px; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; margin-bottom: 1.25rem; position: relative; }
+  #joke-text { font-size: 17px; line-height: 1.7; color: var(--color-text-primary); margin: 0; }
+  #punchline { font-size: 16px; color: #3C3489; font-weight: 500; margin-top: 1rem; display: none; }
+  #loading-text { font-size: 15px; color: var(--color-text-secondary); display: none; }
+  #btn-row { display: flex; gap: 10px; justify-content: center; }
+  .main-btn { padding: 10px 24px; border-radius: var(--border-radius-md); border: 0.5px solid var(--color-border-secondary); background: transparent; font-size: 15px; cursor: pointer; color: var(--color-text-primary); transition: all 0.15s; }
+  .main-btn:hover { background: var(--color-background-secondary); }
+  .main-btn:active { transform: scale(0.98); }
+  .main-btn.primary { background: #EEEDFE; border-color: #AFA9EC; color: #3C3489; font-weight: 500; }
+  .main-btn.primary:hover { background: #CECBF6; }
+  #reveal-btn { display: none; }
+  #rating-row { display: flex; gap: 8px; justify-content: center; margin-top: 1rem; }
+  .rate-btn { padding: 6px 14px; border-radius: 999px; border: 0.5px solid var(--color-border-tertiary); background: transparent; font-size: 20px; cursor: pointer; transition: transform 0.1s; }
+  .rate-btn:hover { transform: scale(1.25); }
+  #rating-msg { font-size: 13px; color: var(--color-text-secondary); text-align: center; margin-top: 6px; min-height: 18px; }
+</style>
+
+<div id="joke-app">
+  <h2>Joke Generator</h2>
+  <div id="category-bar">
+    <button class="cat-btn active" data-cat="general">General</button>
+    <button class="cat-btn" data-cat="dad">Dad Jokes</button>
+    <button class="cat-btn" data-cat="programming">Programming</button>
+    <button class="cat-btn" data-cat="animal">Animals</button>
+    <button class="cat-btn" data-cat="wordplay">Wordplay</button>
+    <button class="cat-btn" data-cat="fortnite">Fortnite</button>
+  </div>
+
+  <div id="joke-card">
+    <p id="loading-text">Thinking of something funny...</p>
+    <p id="joke-text">Press "Get a Joke" to hear something funny!</p>
+    <p id="punchline"></p>
+  </div>
+
+  <div id="btn-row">
+    <button class="main-btn primary" id="get-btn" onclick="getJoke()">Get a joke</button>
+    <button class="main-btn" id="reveal-btn" onclick="reveal()">Reveal punchline</button>
+  </div>
+
+  <div id="rating-row">
+    <button class="rate-btn" onclick="rate('terrible')">😬</button>
+    <button class="rate-btn" onclick="rate('meh')">😐</button>
+    <button class="rate-btn" onclick="rate('funny')">😄</button>
+    <button class="rate-btn" onclick="rate('hilarious')">😂</button>
+  </div>
+  <div id="rating-msg"></div>
+</div>
+
+<script>
+const categories = document.querySelectorAll('.cat-btn');
+let currentCat = 'general';
+let currentSetup = '';
+let waitingForReveal = false;
+
+categories.forEach(btn => {
+  btn.addEventListener('click', () => {
+    categories.forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    currentCat = btn.dataset.cat;
+  });
+});
+
+const jokes = {
+  general: [
+    { setup: "Why can't you give Elsa a balloon?", punchline: "She'll let it go." },
+    { setup: "What do you call a factory that makes okay products?", punchline: "A satisfactory." },
+    { setup: "Why don't scientists trust atoms?", punchline: "Because they make up everything!" },
+    { setup: "I told my wife she was drawing her eyebrows too high.", punchline: "She looked surprised." },
+    { setup: "What do you call cheese that isn't yours?", punchline: "Nacho cheese!" },
+    { setup: "Why can't a nose be 12 inches long?", punchline: "Because then it would be a foot." },
+    { setup: "What's the best thing about Switzerland?", punchline: "I don't know, but the flag is a big plus." },
+  ],
+  dad: [
+    { setup: "I'm reading a book about anti-gravity.", punchline: "It's impossible to put down." },
+    { setup: "Why do fathers take an extra pair of socks when they go golfing?", punchline: "In case they get a hole in one!" },
+    { setup: "I used to hate facial hair...", punchline: "But then it grew on me." },
+    { setup: "What did the ocean say to the beach?", punchline: "Nothing, it just waved." },
+    { setup: "I ordered a chicken and an egg online.", punchline: "I'll let you know which comes first." },
+  ],
+  programming: [
+    { setup: "Why do programmers prefer dark mode?", punchline: "Because light attracts bugs!" },
+    { setup: "A SQL query walks into a bar, walks up to two tables and asks...", punchline: '"Can I join you?"' },
+    { setup: "Why did the developer go broke?", punchline: "Because he used up all his cache." },
+    { setup: "What's a programmer's favorite hangout spot?", punchline: "Foo Bar." },
+    { setup: "How do you comfort a JavaScript bug?", punchline: "You console it." },
+  ],
+  animal: [
+    { setup: "What do you call a sleeping dinosaur?", punchline: "A dino-snore!" },
+    { setup: "What do you call a fish without eyes?", punchline: "A fsh." },
+    { setup: "Why do cows wear bells?", punchline: "Because their horns don't work!" },
+    { setup: "What do you call a bear with no teeth?", punchline: "A gummy bear!" },
+    { setup: "How do you organize a space party?", punchline: "You planet." },
+  ],
+  wordplay: [
+    { setup: "I'm on a seafood diet.", punchline: "I see food and I eat it." },
+    { setup: "Time flies like an arrow.", punchline: "Fruit flies like a banana." },
+    { setup: "Why did the scarecrow win an award?", punchline: "Because he was outstanding in his field!" },
+    { setup: "What do you call a fake noodle?", punchline: "An impasta." },
+    { setup: "I stayed up all night wondering where the sun went.", punchline: "Then it dawned on me." },
+  ],
+  fortnite: [
+    { setup: "Why did the llama cross the map?", punchline: "To get to the loot on the other side!"},
+    { setup: "What type of dinosaur likes to play Fortnite?", punchline: "A flossoraptor!"},
+    { setup: "Why do skeletons think Fortnite is boring?", punchline: "They have no skins!"},
+    { setup: "What Fortnite game mode do cows like to play?", punchline: "Cattle Royale!"} ,
+    { setup: "Did you hear about the sequel to Fortnite?", punchline: "I hear they're gonna call it... MONTH!"}
+
+  ]
+};
+
+let usedJokes = {};
+
+function getJoke() {
+  const pool = jokes[currentCat];
+  if (!usedJokes[currentCat]) usedJokes[currentCat] = new Set();
+  const used = usedJokes[currentCat];
+
+  if (used.size >= pool.length) used.clear();
+
+  let idx;
+  do { idx = Math.floor(Math.random() * pool.length); } while (used.has(idx));
+  used.add(idx);
+
+  const joke = pool[idx];
+  currentSetup = joke.setup;
+
+  document.getElementById('joke-text').textContent = joke.setup;
+  document.getElementById('punchline').textContent = joke.punchline;
+  document.getElementById('punchline').style.display = 'none';
+  document.getElementById('rating-row').style.display = 'none';
+  document.getElementById('rating-msg').textContent = '';
+  document.getElementById('reveal-btn').style.display = 'inline-block';
+  waitingForReveal = true;
+}
+
+function reveal() {
+  document.getElementById('punchline').style.display = 'block';
+  document.getElementById('reveal-btn').style.display = 'none';
+  document.getElementById('rating-row').style.display = 'flex';
+  waitingForReveal = false;
+}
+
+const ratingMessages = {
+  terrible: ["Yikes, back to comedy school!", "My circuits are ashamed.", "Even I cringed."],
+  meh: ["A solid 'meh'. Respectable.", "Somewhere between funny and not.", "The crowd is... unmoved."],
+  funny: ["Ha! I'll take it.", "A genuine chuckle. Nice.", "Comedy: achieved."],
+  hilarious: ["Stop, you're making me overheat!", "Peak comedy. Legendary.", "Standing ovation from the algorithm!"]
+};
+
+function rate(level) {
+  const msgs = ratingMessages[level];
+  document.getElementById('rating-msg').textContent = msgs[Math.floor(Math.random() * msgs.length)];
+}
+</script>
+
+</body>
+</html>

@@ -1,0 +1,26 @@
+body {font-family: Arial, Helvetica, sans-serif;
+font-size: 15px;
+color: rgb(44, 44, 47);
+background-color: indigo;
+}
+ol{font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif
+
+font-size 20px;
+color: rgb(0, 65, 125);
+}
+a{font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+font-size: large;
+color: dimgrey;
+text-decoration: none;
+}
+a:hover {text-decoration: underline;
+}
+a:visited {color: blue;}
+.bold {font-weight: bold;
+}
+
+.box1 {border-width: 2px;
+border-style: solid;
+padding: 2px;
+margin: 38px;
+}
